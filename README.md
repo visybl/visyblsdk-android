@@ -1,7 +1,7 @@
 # visyblsdk-android
 Android App with Visybl SDK to read and display Visybl beacons parameters.
 
-Visybl.jar is used to read visybl BLE packet coming from Visybl Beacons and provides an easier way to access all the parameters with few lines of code inside the Android App. 
+Visybl.jar is used to read BLE packet coming from Visybl Beacons and provides an easier way to access all the parameters with few lines of code inside any Android App.
 
 This example Android project provides a fully working App using Visybl.jar file. Find the below 3 steps to use Visybl.jar in any Android App.
 
