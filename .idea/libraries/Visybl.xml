@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Visybl">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/Visybl.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
