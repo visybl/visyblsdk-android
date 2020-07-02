@@ -1,20 +1,26 @@
 package com.visybl.visyblsdk_android;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -38,11 +44,16 @@ import java.util.Iterator;
 import static com.visybl.visyblsdk_android.Logger.log;
 
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends AppCompatActivity
 {
 
+    private static final String TAG = "Main Activity";
     static BluetoothManager bluetoothManager;
     static BluetoothAdapter bluetoothAdapter;
+
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    private static final int PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
+
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final String ID = "ID", BATTERY = "BATTERY", RSSI = "RSSI", TEMPERATURE = "TEMPERATURE", ADV_COUNT = "ADV_COUNT",
@@ -71,13 +82,61 @@ public class MainActivity extends ActionBarActivity
 
         setContentView(R.layout.activity_main);
 
+
+
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android M Permission check 
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Visybl App needs location access");
+                builder.setMessage("Please grant location access so this app can detect beacons.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                    }
+                });
+                builder.show();
+            }
+        }
+
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Constants.ACTION_UPDATE_NEW);
         mIntentFilter.addAction(Constants.ACTION_UPDATE_OLD);
 
         initBT();
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "coarse location permission granted");
+                } else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Functionality limited");
+                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+
+                    });
+                    builder.show();
+                }
+                return;
+            }
+        }
     }
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver()
@@ -88,6 +147,8 @@ public class MainActivity extends ActionBarActivity
 
             String name = intent.getStringExtra(Constants.EXTRA_NAME);
             Visybl vis = Visybl.beaconsLinkedHashMap.get(name);
+
+            //vis.getDeviceName();
 
             if (vis == null)
             {

@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Visybl">
+  <library name="Gradle: __local_aars__:./app/libs/Visybl.jar:unspecified@jar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/app/libs/Visybl.jar!/" />
     </CLASSES>

@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
 
+android {
+    compileSdkVersion 28
     defaultConfig {
-        applicationId "com.visybl.visyblsdk_android"
-        minSdkVersion 19
-        targetSdkVersion 21
+        applicationId "com.visybl.android"
+        minSdkVersion 23
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -22,6 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:+'
     compile files('libs/log4j-1.2.17.jar')
 }
